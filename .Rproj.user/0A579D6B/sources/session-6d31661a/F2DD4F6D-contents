@@ -1,0 +1,70 @@
+---
+title: "SmartInsights: AI-Powered Data Profiling Case Study"
+author: "Daniel Dawit."
+date: "2025-07-10"
+output: html_document
+params:
+  dataset_path: "data/hotel_bookings.csv"
+---
+
+# Stage 1 – Ask: Define the Problem
+
+## 🧩 Business Task
+
+The objective of this project is to design an **AI-powered data profiling tool** that can automatically summarize, assess, and highlight issues within any structured dataset. The goal is to help analysts quickly gain insight into the quality and structure of their data and prepare it for analysis or modeling.
+
+This tool, titled **SmartInsights**, leverages R and generative AI logic to automate the “first glance” analysis process — such as inspecting missing values, data types, outliers, unique values, and format issues — and produce human-readable reports.
+
+## 👥 Stakeholders
+
+- **Primary User:** Junior or mid-level data analysts  
+- **Secondary Users:** Data scientists, business analysts, data engineers  
+- **Project Sponsor:** Analytics team lead or manager overseeing data quality infrastructure
+
+## ❓ Guiding Questions
+
+1. How can we automate the profiling of various structured datasets using R?
+2. What specific insights should the profiling tool generate (e.g., summary stats, missing values, column types)?
+3. How can we make the tool adaptable to different datasets with minimal user input?
+4. Can we enhance this with generative AI to produce helpful explanations in plain English?
+
+# Stage 2 – Prepare: Load and Inspect the Data
+
+<pre><code>```{r load-packages, message=FALSE, warning=FALSE} required_packages <- c("readr", "dplyr", "janitor", "skimr", "ggplot2", "lubridate", "rmarkdown") for (pkg in required_packages) { if (!requireNamespace(pkg, quietly = TRUE)) { install.packages(pkg, quiet = TRUE) } library(pkg, character.only = TRUE) } ```</code></pre>
+
+# Load dataset
+data <- read_csv(params$dataset_path)
+glimpse(data)
+```
+
+# Stage 3 – Process: Clean the Data
+
+<pre><code>```{r clean-data, message=FALSE, warning=FALSE} # Load the dataset using the path passed from the R script dataset <- read_csv(params$dataset_path) %>% clean_names() # Remove columns with all missing values dataset <- dataset[, colSums(is.na(dataset)) < nrow(dataset)] # Replace missing values with "missing" dataset[is.na(dataset)] <- "missing" # Standardize text columns to lowercase dataset <- dataset %>% mutate(across(where(is.character), tolower)) ```</code></pre>
+
+# Remove fully empty columns
+data_clean <- data_clean[, colSums(is.na(data_clean)) < nrow(data_clean)]
+
+# Replace NA with "missing" for non-numeric
+data_clean <- data_clean %>%
+  mutate(across(where(is.character), ~replace_na(.x, "missing")))
+```
+
+# Stage 4 – Analyze: Profile the Data
+
+<pre><code>```{r profile, message=FALSE, warning=FALSE} # Structure of the dataset str(dataset) # Summary statistics for numeric columns dataset %>% select(where(is.numeric)) %>% summary() # Count of unique values in each column unique_counts <- sapply(dataset, function(x) length(unique(x))) unique_counts ```</code></pre>
+
+# Stage 5 – Share: Visual Summary
+
+<pre><code>```{r visual-summary, message=FALSE, warning=FALSE} library(ggplot2) # Automatically detect a categorical column for bar plot cat_col <- names(dataset)[sapply(dataset, function(x) is.character(x) || is.factor(x))][1] if (!is.null(cat_col)) { ggplot(dataset, aes_string(x = cat_col)) + geom_bar(fill = "steelblue") + labs(title = paste("Distribution of", cat_col), x = cat_col, y = "Count") + theme_minimal() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) } else { print("No categorical column found to plot.") } ```</code></pre>
+
+# Stage 6 – Act: Next Steps
+
+- Package the script into a reusable R function or library.
+- Integrate GPT-powered summary for descriptive commentary.
+- Offer UI (e.g., Shiny app) to allow users to upload their datasets.
+
+# Stage 7 – Reflect: Lessons Learned
+
+- Data profiling automation helps junior analysts start faster.
+- Modular R scripts enhance reusability and scalability.
+- Combining AI with data tools offers human-friendly insights.

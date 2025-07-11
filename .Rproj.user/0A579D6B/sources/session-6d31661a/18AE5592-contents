@@ -1,0 +1,18 @@
+Package: smartinsights
+Type: Package
+Title: AI-Powered Data Profiling Tool
+Version: 0.1.0
+Author: Daniel Dawit
+Maintainer: Daniel Dawit <danielgebreslasie96@gmail.com>
+Description: Automates data profiling and reporting with R and generative AI logic.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    readr,
+    dplyr,
+    janitor,
+    skimr,
+    ggplot2,
+    rmarkdown
+RoxygenNote: 7.3.2
